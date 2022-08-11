@@ -1,11 +1,8 @@
 pandas
 numpy
 matplotlib
-matplotlib.pyplot
 seaborn
-plotly.express
-plotly.offline
-plotly.graph_objs
+plotly
 sodapy
 requests
 csv
