@@ -15,8 +15,6 @@ import csv
 import io
 import datetime as dt
 import streamlit as st
-from streamlit_option_menu import option_menu
-st.set_option('deprecation.showPyplotGlobalUse', False)
 
 
 st.set_page_config(
