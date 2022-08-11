@@ -6,3 +6,4 @@ plotly
 sodapy
 requests
 streamlit
+streamlit-option-menu
