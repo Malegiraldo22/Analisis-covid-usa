@@ -5,7 +5,4 @@ seaborn
 plotly
 sodapy
 requests
-csv
-io
-datetime
 streamlit
