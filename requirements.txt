@@ -1,0 +1,14 @@
+pandas
+numpy
+matplotlib
+matplotlib.pyplot
+seaborn
+plotly.express
+plotly.offline
+plotly.graph_objs
+sodapy
+requests
+csv
+io
+datetime
+streamlit
