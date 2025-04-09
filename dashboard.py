@@ -16,7 +16,6 @@ import io
 import datetime as dt
 import streamlit as st
 from streamlit_option_menu import option_menu
-st.set_option('deprecation.showPyplotGlobalUse', False)
 
 
 st.set_page_config(
@@ -26,7 +25,7 @@ st.set_page_config(
 
 st.title("Análisis Impacto COVID19 EEUU")
 
-@st.experimental_memo
+@st.cache_data
 def get_data():
     headers = CaseInsensitiveDict()
     headers["Accept"] = "application/json"
@@ -113,22 +112,21 @@ if choose == 'Introducción':
         """, unsafe_allow_html=True
     )
 
-    @st.experimental_memo
+    @st.cache_data
     def casos_totales():
         data_us = pd.read_csv('https://raw.githubusercontent.com/nytimes/covid-19-data/master/us.csv', parse_dates=['date'])
-        plt.figure(figsize=(16, 5), dpi=600)
-        fig = sns.lineplot(x='date', y='cases', data=data_us)
-        plt.xticks(rotation=45)
-        plt.xlabel('')
-        plt.ylabel('Número de casos (10 millones)')
-        plt.title('Casos COVID19 Estados Unidos Enero 2020 a hoy',
-                fontsize=16)
-        sns.despine(left=False, bottom=False)
+        fig, ax = plt.subplots(figsize=(16, 5), dpi=600)
+        sns.lineplot(x='date', y='cases', data=data_us, ax=ax)
+
+        ax.set_xticklabels(ax.get_xticklabels(), rotation=45)
+        ax.set_xlabel('')
+        ax.set_ylabel('Número de casos (10 millones)')
+        ax.set_title('Casos COVID19 Estados Unidos Enero 2020 a hoy', fontsize=16)
+        sns.despine(ax=ax, left=False, bottom=False)
 
         return fig
 
-    st.write(casos_totales())
-    st.pyplot()
+    st.pyplot(casos_totales())
 
 elif choose == 'Top 5 Ocupación hospitalaria':
 
@@ -521,8 +519,11 @@ elif choose == 'Peor mes de la pandemia':
 
         df['month'] = pd.DatetimeIndex(df['date']).month
         df['year'] = df['date'].dt.isocalendar().year
+        df = df.drop(columns=['date'])
+        cols_to_sum = ['deaths_covid', 'critical_staffing_shortage_today_yes',
+               'staffed_adult_icu_bed_occupancy', 'total_adult_patients_hospitalized_confirmed_covid']
 
-        df_grouped = df.groupby(['year', 'month']).sum()
+        df_grouped = df.groupby(['year', 'month'])[cols_to_sum].sum()
         df_grouped.sort_values(['deaths_covid'], inplace=True, ascending=False)
         df_grouped.reset_index(inplace=True)
 
@@ -836,6 +837,8 @@ elif choose == 'Peor més de la pandemia':
 
         df['month'] = pd.DatetimeIndex(df['date']).month
         df['year'] = df['date'].dt.isocalendar().year
+
+        df = df.drop(columns=['date'])
 
         df_grouped = df.groupby(['year', 'month']).sum()
         df_grouped.sort_values(['deaths_covid'], inplace=True, ascending=False)
